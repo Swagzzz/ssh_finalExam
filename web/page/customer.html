@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>客户管理</title>
+    <link rel="shortcut icon" href="images/stephy.ico"/>
+    <link rel="stylesheet" href="../layui/css/layui.css" type="text/css" media="all">
+    <script type="text/javascript" src="../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../layui/layui.js"></script>
+    <script type="text/javascript" src="../js/publicSetup.js"></script>
+    <script type="text/javascript">
+        layui.use(['layer', 'table', 'jquery', 'form', 'laydate', 'element'], function () {
+            var layer = layui.layer, table = layui.table, $ = layui.jquery, form = layui.form, laydate = layui.laydate,
+                element = layui.element;
+            /*$.post('memberAction_getCMember', function (member) {
+                if (member.level != '系统管理员') {
+                    location.href = 'index.html';
+                }
+            }, 'json');*/
+            table.render({
+                url: '../getCustomers', //这是请求后台的路径, 因为当前是page文件夹下，所以要用../返回到根目录，实际的请求路径是/getCustomers
+                elem: '#lay-tb' //指定原始表格元素选择器（推荐id选择器）
+                ,height: 400 //容器高度
+                ,cols: [
+                    {filed: 'cId', title: '客户编号', width: '100', sort: true, align: 'center'},
+                    {filed: 'cusName', title: '客户名称', width: '160', align: 'center'},
+                    {filed: 'cusType', title: '客户类型', width: '100', sort: true, align: 'center'},
+                    {filed: 'origPay', title: '初始应付', width: '100', sort: true, align: 'center'},
+                    {filed: 'Arrears', title: '应付欠款', width: '100', sort: true, align: 'center'},
+                    {filed: 'perContact', title: '联系人', width: '160', align: 'center'},
+                    {filed: 'mpTel', title: '手机号码', width: '180', align: 'center'},
+                    {filed: 'salesMan', title: '业务员', width: '160', align: 'center'},
+                    {filed: 'greatedate', title: '创建时间', width: '180', sort: true, align: 'center'},
+                    {filed: 'op', title: '操作', width: '180', align: 'center'},
+                    ],
+                done: (res, curr, count) => {
+
+                }
+            });
+            laydate.render({
+                elem: '#s_beginTime',
+                type: 'datetime'
+            });
+            laydate.render({
+                elem: '#s_endTime',
+                type: 'datetime'
+            });
+            form.on("checkbox(signUp)", function (data) {
+                var approVersion = -1;
+                if (data.elem.checked) {
+                    approVersion = 0;
+                } else approVersion = 1;
+                var sId = data.elem.parentNode.parentNode.parentNode.firstChild.innerText;
+                $.post('adminOp_approSignUp', {'approVersion': approVersion, 'signUpId': sId}, function (result) {
+                    if (result.complete) {
+                        layer.msg(result.msg, {icon: 6, time: 3000});
+                        table.reload("examTable", {
+                            url: 'adminOp_allSignUp'
+                        });
+                    }
+                    else layer.msg("操作失败,请重试,多次失败请联系管理员", {icon: 5});
+                }, 'json');
+            });
+            form.on('submit(searchBtn)', function (data) {
+                var reg = /^[\d|\s]*$/;
+                if (data.field.s_sId.match(reg)) {
+                    table.reload('examTable', {
+                        url: 'adminOp_allSignUp',
+                        where: {
+                            s_examName: data.field.s_examName,
+                            s_examBeginTime: data.field.s_examBeginTime,
+                            s_examEndTime: data.field.s_examEndTime,
+                            s_sId: data.field.s_sId
+                        }
+                    });
+                } else {
+                    layer.alert("需要搜索的ID只能为数字");
+                    return;
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <table id="lay-tb" lay-filter="tb_filter"></table>
+</body>
+</html>

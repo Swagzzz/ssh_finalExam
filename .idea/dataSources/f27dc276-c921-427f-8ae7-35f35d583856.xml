@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataSource name="MySQL">
+  <database-model serializer="dbm" rdbms="MYSQL" format-version="4.4">
+    <root id="1"/>
+    <schema id="2" parent="1" name="ssh_finalexam">
+      <Current>1</Current>
+      <Visible>1</Visible>
+    </schema>
+    <schema id="3" parent="1" name="db_studentinfo"/>
+    <schema id="4" parent="1" name="hibernatedb"/>
+    <schema id="5" parent="1" name="information_schema"/>
+    <schema id="6" parent="1" name="mysql"/>
+    <schema id="7" parent="1" name="performance_schema"/>
+    <schema id="8" parent="1" name="sakila"/>
+    <schema id="9" parent="1" name="sys"/>
+    <schema id="10" parent="1" name="world"/>
+    <table id="11" parent="2" name="admin"/>
+    <table id="12" parent="2" name="approval"/>
+    <table id="13" parent="2" name="certificate"/>
+    <table id="14" parent="2" name="exam"/>
+    <table id="15" parent="2" name="examtype"/>
+    <table id="16" parent="2" name="member"/>
+    <table id="17" parent="2" name="notice"/>
+    <table id="18" parent="2" name="student"/>
+    <column id="19" parent="11" name="adminId">
+      <Position>1</Position>
+      <DataType>int(11)|0</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <column id="20" parent="11" name="adminSex">
+      <Position>2</Position>
+      <DataType>int(11)|0</DataType>
+    </column>
+    <column id="21" parent="11" name="adminPhone">
+      <Position>3</Position>
+      <DataType>varchar(20)|0</DataType>
+    </column>
+    <column id="22" parent="11" name="adminIDCard">
+      <Position>4</Position>
+      <DataType>varchar(50)|0</DataType>
+    </column>
+    <column id="23" parent="11" name="memberId">
+      <Position>5</Position>
+      <DataType>int(11)|0</DataType>
+    </column>
+    <column id="24" parent="11" name="adminNo">
+      <Position>6</Position>
+      <DataType>int(11)|0</DataType>
+    </column>
+    <column id="25" parent="11" name="adminName">
+      <Position>7</Position>
+      <DataType>varchar(50)|0</DataType>
+    </column>
+    <column id="26" parent="11" name="adminAddress">
+      <Position>8</Position>
+      <DataType>varchar(100)|0</DataType>
+    </column>
+    <column id="27" parent="11" name="adminImg">
+      <Position>9</Position>
+      <DataType>varchar(120)|0</DataType>
+    </column>
+    <index id="28" parent="11" name="adm_memFk_idx">
+      <ColNames>memberId</ColNames>
+    </index>
+    <key id="29" parent="11" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>adminId</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <foreign-key id="30" parent="11" name="adm_memFk">
+      <ColNames>memberId</ColNames>
+      <RefSchemaName>ssh_finalexam</RefSchemaName>
+      <RefTableName>member</RefTableName>
+      <RefColNames>memberId</RefColNames>
+    </foreign-key>
+    <column id="31" parent="12" name="approId">
+      <Position>1</Position>
+      <DataType>int(11)|0</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <column id="32" parent="12" name="approType">
+      <Position>2</Position>
+      <DataType>int(11)|0</DataType>
+    </column>
+    <column id="33" parent="12" name="memId">
+      <Position>3</Position>
+      <DataType>int(11)|0</DataType>
+    </column>
+    <column id="34" parent="12" name="approBeginTime">
+      <Position>4</Position>
+      <DataType>date|0</DataType>
+    </column>
+    <column id="35" parent="12" name="approEndTime">
+      <Position>5</Position>
+      <DataType>date|0</DataType>
+    </column>
+    <index id="36" parent="12" name="appro_memFk_idx">
+      <ColNames>memId</ColNames>
+    </index>
+    <key id="37" parent="12" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>approId</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <foreign-key id="38" parent="12" name="appro_memFk">
+      <ColNames>memId</ColNames>
+      <RefSchemaName>ssh_finalexam</RefSchemaName>
+      <RefTableName>member</RefTableName>
+      <RefColNames>memberId</RefColNames>
+    </foreign-key>
+    <column id="39" parent="13" name="certificateId">
+      <Position>1</Position>
+      <DataType>int(11)|0</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <column id="40" parent="13" name="stuNo">
+      <Position>2</Position>
+      <DataType>int(11)|0</DataType>
+    </column>
+    <column id="41" parent="13" name="examId">
+      <Position>3</Position>
+      <DataType>int(11)|0</DataType>
+    </column>
+    <index id="42" parent="13" name="cert_examFk_idx">
+      <ColNames>examId</ColNames>
+    </index>
+    <index id="43" parent="13" name="cert_stuFk_idx">
+      <ColNames>stuNo</ColNames>
+    </index>
+    <key id="44" parent="13" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>certificateId</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <foreign-key id="45" parent="13" name="cert_stuFk">
+      <ColNames>stuNo</ColNames>
+      <RefSchemaName>ssh_finalexam</RefSchemaName>
+      <RefTableName>student</RefTableName>
+      <RefColNames>stuNo</RefColNames>
+    </foreign-key>
+    <foreign-key id="46" parent="13" name="cert_examFk">
+      <ColNames>examId</ColNames>
+      <RefSchemaName>ssh_finalexam</RefSchemaName>
+      <RefTableName>exam</RefTableName>
+      <RefColNames>examId</RefColNames>
+    </foreign-key>
+    <column id="47" parent="14" name="examId">
+      <Position>1</Position>
+      <DataType>int(11)|0</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <column id="48" parent="14" name="examName">
+      <Position>2</Position>
+      <DataType>varchar(100)|0</DataType>
+    </column>
+    <column id="49" parent="14" name="examTypeId">
+      <Position>3</Position>
+      <DataType>int(11)|0</DataType>
+    </column>
+    <index id="50" parent="14" name="exam_examTypeFk_idx">
+      <ColNames>examTypeId</ColNames>
+    </index>
+    <key id="51" parent="14" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>examId</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <foreign-key id="52" parent="14" name="exam_examTypeFk">
+      <ColNames>examTypeId</ColNames>
+      <RefSchemaName>ssh_finalexam</RefSchemaName>
+      <RefTableName>examtype</RefTableName>
+      <RefColNames>examTypeId</RefColNames>
+    </foreign-key>
+    <column id="53" parent="15" name="examTypeId">
+      <Position>1</Position>
+      <DataType>int(11)|0</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <column id="54" parent="15" name="type_examName">
+      <Position>2</Position>
+      <DataType>varchar(100)|0</DataType>
+    </column>
+    <column id="55" parent="15" name="examBeginTime">
+      <Position>3</Position>
+      <DataType>date|0</DataType>
+    </column>
+    <column id="56" parent="15" name="examEndTime">
+      <Position>4</Position>
+      <DataType>date|0</DataType>
+    </column>
+    <key id="57" parent="15" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>examTypeId</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <column id="58" parent="16" name="memberId">
+      <Position>1</Position>
+      <DataType>int(11)|0</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <column id="59" parent="16" name="memName">
+      <Position>2</Position>
+      <DataType>varchar(50)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="60" parent="16" name="level">
+      <Position>3</Position>
+      <DataType>int(11)|0</DataType>
+      <NotNull>1</NotNull>
+      <DefaultExpression>&apos;0&apos;</DefaultExpression>
+    </column>
+    <column id="61" parent="16" name="isApproved">
+      <Position>4</Position>
+      <DataType>int(11)|0</DataType>
+    </column>
+    <column id="62" parent="16" name="memPassword">
+      <Position>5</Position>
+      <DataType>varchar(50)|0</DataType>
+    </column>
+    <index id="63" parent="16" name="memName_UNIQUE">
+      <ColNames>memName</ColNames>
+      <Unique>1</Unique>
+    </index>
+    <key id="64" parent="16" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>memberId</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <key id="65" parent="16" name="memName_UNIQUE">
+      <ColNames>memName</ColNames>
+      <UnderlyingIndexName>memName_UNIQUE</UnderlyingIndexName>
+    </key>
+    <column id="66" parent="17" name="noticeId">
+      <Position>1</Position>
+      <DataType>int(11)|0</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <column id="67" parent="17" name="noticeTitle">
+      <Position>2</Position>
+      <DataType>varchar(100)|0</DataType>
+    </column>
+    <column id="68" parent="17" name="noticeContent">
+      <Position>3</Position>
+      <DataType>blob|0</DataType>
+    </column>
+    <column id="69" parent="17" name="notice_adminId">
+      <Position>4</Position>
+      <DataType>int(11)|0</DataType>
+    </column>
+    <column id="70" parent="17" name="noticeTime">
+      <Position>5</Position>
+      <DataType>date|0</DataType>
+    </column>
+    <index id="71" parent="17" name="notice_adminFk_idx">
+      <ColNames>notice_adminId</ColNames>
+    </index>
+    <key id="72" parent="17" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>noticeId</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <foreign-key id="73" parent="17" name="notice_adminFk">
+      <ColNames>notice_adminId</ColNames>
+      <RefSchemaName>ssh_finalexam</RefSchemaName>
+      <RefTableName>admin</RefTableName>
+      <RefColNames>adminId</RefColNames>
+    </foreign-key>
+    <column id="74" parent="18" name="stuId">
+      <Position>1</Position>
+      <DataType>int(11)|0</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <column id="75" parent="18" name="stuNo">
+      <Position>2</Position>
+      <DataType>int(11)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="76" parent="18" name="stuName">
+      <Position>3</Position>
+      <DataType>varchar(50)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="77" parent="18" name="stuSex">
+      <Position>4</Position>
+      <DataType>int(11)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="78" parent="18" name="stuPhone">
+      <Position>5</Position>
+      <DataType>varchar(20)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="79" parent="18" name="stuAddress">
+      <Position>6</Position>
+      <DataType>varchar(100)|0</DataType>
+    </column>
+    <column id="80" parent="18" name="stuIDCard">
+      <Position>7</Position>
+      <DataType>varchar(50)|0</DataType>
+    </column>
+    <column id="81" parent="18" name="memberId">
+      <Position>8</Position>
+      <DataType>int(11)|0</DataType>
+    </column>
+    <column id="82" parent="18" name="stuImg">
+      <Position>9</Position>
+      <DataType>varchar(120)|0</DataType>
+    </column>
+    <index id="83" parent="18" name="stuIDCard_UNIQUE">
+      <ColNames>stuIDCard</ColNames>
+      <Unique>1</Unique>
+    </index>
+    <index id="84" parent="18" name="stuNo_UNIQUE">
+      <ColNames>stuNo</ColNames>
+      <Unique>1</Unique>
+    </index>
+    <index id="85" parent="18" name="stu_memFk_idx">
+      <ColNames>memberId</ColNames>
+    </index>
+    <key id="86" parent="18" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>stuId</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <key id="87" parent="18" name="stuNo_UNIQUE">
+      <ColNames>stuNo</ColNames>
+      <UnderlyingIndexName>stuNo_UNIQUE</UnderlyingIndexName>
+    </key>
+    <key id="88" parent="18" name="stuIDCard_UNIQUE">
+      <ColNames>stuIDCard</ColNames>
+      <UnderlyingIndexName>stuIDCard_UNIQUE</UnderlyingIndexName>
+    </key>
+    <foreign-key id="89" parent="18" name="stu_memFk">
+      <ColNames>memberId</ColNames>
+      <RefSchemaName>ssh_finalexam</RefSchemaName>
+      <RefTableName>member</RefTableName>
+      <RefColNames>memberId</RefColNames>
+    </foreign-key>
+  </database-model>
+</dataSource>

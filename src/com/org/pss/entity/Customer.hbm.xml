@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.org.pss.entity.Customer" table="t_customer" catalog="pss" lazy="false">
+        <id name="cId" type="java.lang.Integer">
+            <column name="cId" not-null="true"/>
+            <generator class="native"/>
+        </id>
+        <property name="cusName" type="java.lang.String">
+            <column name="cusName"/>
+        </property>
+        <property name="cusType" type="java.lang.String">
+            <column name="cusType" length="25"/>
+        </property>
+        <property name="origPay" type="java.lang.Double">
+            <column name="origPay" length="25" />
+        </property>
+        <property name="Arrears" type="java.lang.Double">
+            <column name="Arrears" length="25"/>
+        </property>
+        <property name="perContact" type="java.lang.String">
+            <column name="perContact" length="25"/>
+        </property>
+        <property name="mpTel" type="java.lang.String">
+            <column name="mpTel" length="20"/>
+        </property>
+        <property name="salesMan" type="java.lang.String">
+            <column name="salesMan" length="25"/>
+        </property>
+        <property name="greatedate" type="java.util.Date">
+            <column name="greatedate" />
+        </property>
+        <set name="orders" table="order" outer-join="true" inverse="true" cascade="all">
+            <key column="cId"/>
+            <one-to-many class="com.org.pss.entity.Order"/>
+        </set>
+        <set name="goodss" table="t_customer_goods">
+            <key>
+                <column name="Customer_Id"></column>
+            </key>
+            <many-to-many class="com.org.pss.entity.Goods" column="Goods_Id"></many-to-many>
+        </set>
+</class>
+</hibernate-mapping>

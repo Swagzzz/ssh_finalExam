@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="vo.Member" table="member" catalog="ssh_finalexam">
+        <id name="memberId" type="java.lang.Integer">
+            <column name="memberId" not-null="true"/>
+            <generator class="native"/>
+        </id>
+        <property name="memName" type="java.lang.String">
+            <column name="memName" length="50" not-null="true"/>
+        </property>
+        <property name="level" type="java.lang.Integer">
+            <column name="level"/>
+        </property>
+        <property name="memPassword" type="java.lang.String">
+            <column name="memPassword" length="50" not-null="true"/>
+        </property>
+        <property name="isApproved" type="java.lang.Integer">
+            <column name="isApproved"/>
+        </property>
+        <!--<set name="cource" table="user_cource" inverse="true">
+            <key column="userId"/>
+            <many-to-many class="vo.Cource" column="courceId"></many-to-many>
+        </set>-->
+        <one-to-one name="student" class="vo.Student" property-ref="member"/>
+        <one-to-one name="admin" class="vo.Admin" property-ref="member"/>
+        <property name="repassword" type="java.lang.String">
+            <column name="repassword" length="50"/>
+        </property>
+    </class>
+</hibernate-mapping>

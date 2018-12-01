@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户管理</title>
+    <link rel="shortcut icon" href=../static/images/stephy.ico"/>
+    <link rel="stylesheet" href="../static/layui/css/layui.css" type="text/css" media="all">
+    <script type="text/javascript" src="../static/layui/layui.js"></script>
+</head>
+<body>
+<button type="button" class="layui-btn-danger layui-btn delAll" style="z-index: 20000000"><i class="layui-icon">&#xe640;</i>批量删除</button>
+<button type="button" class="layui-btn-normal layui-btn addInfo" style="z-index: 20000000"><i class="layui-icon">&#xe654;</i>添加</button>
+<table id="lay-tb" lay-filter="tb_filter" lay-data="{id: 'tableIndex'}"></table>
+<div id="opBtn" style="display: none;">
+    <button type="button" lay-event="remove" class="layui-btn-danger layui-btn layui-btn-mini"><i class="layui-icon">&#xe640;</i>删除</button>
+    <button type="button" lay-event="edit" class="layui-btn-normal layui-btn layui-btn-mini"><i class="layui-icon">&#xe642;</i>修改</button>
+</div>
+<div style="display: none;" id="addUserInfoFrame">
+    <div class="layui-form layui-form-pane userform"> <!-- 提示：如果你不想用form，你可以换成div等任何一个普通元素 -->
+        <div class="layui-form-item">
+            <label class="layui-form-label">用户名称</label>
+            <div class="layui-input-inline">
+                <input type="text" style="width: 180px;" name="user.fullName" placeholder="请输入姓名" autocomplete="off" class="layui-input">
+            </div>
+            <label class="layui-form-label">性别</label>
+            <div class="layui-input-inline">
+                <select name="user.sex"  autocomplete="off" class="layui-input">
+                    <option value="">请选择性别...</option>
+                    <option value="0">男</option>
+                    <option value="1">女</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">手机号码</label>
+            <div class="layui-input-inline">
+                <input type="text" name="user.mpTel" placeholder="请输入手机" autocomplete="off" class="layui-input">
+            </div>
+            <label class="layui-form-label">地址</label>
+            <div class="layui-input-inline">
+                <input type="text" name="user.Address" placeholder="请输入地址" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">邮箱地址</label>
+            <div class="layui-input-inline">
+                <input type="text" name="user.Email" placeholder="请输入邮箱地址" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <button id="submit_btn" style="display: none" type="button" lay-submit lay-filter="submit_filter">确定</button>
+    </div>
+</div>
+</body>
+<script type="text/javascript">
+    layui.use(['layer', 'table', 'jquery', 'form', 'laydate', 'element'], function () {
+        var layer = layui.layer, table = layui.table, $ = layui.jquery, form = layui.form, laydate = layui.laydate,
+            element = layui.element;
+        var tableRender = table.render({
+            id: 'tableIndex',
+            url: '../userAction_userList', //这是请求后台的路径, 因为当前是page文件夹下，所以要用../返回到根目录，实际的请求路径是/getCustomers
+            elem: '#lay-tb' //指定原始表格元素选择器（推荐id选择器）
+            ,height: 400 //容器高度,
+            ,page: true
+            ,cols: [[
+                {field: 'ck', checkbox: true},
+                {field: 'userId', title: '用户编号', width: '100', sort: true, align: 'center'},
+                {field: 'fullName', title: '姓名', width: '120', align: 'center'},
+                {field: 'sex', title: '性别', width: '100', sort: true, align: 'center'},
+                {field: 'order', title: '订单', width: '100', sort: true, align: 'center'},
+                {field: 'mpTel', title: '联系方式', width: '160', sort: true, align: 'center'},
+                {field: 'Address', title: '地址', width: '200', align: 'center'},
+                {field: 'roleName', title: '角色', width: '120', align: 'center'},
+                {field: 'isAlived', title: '在职状态', width: '160', align: 'center'},
+                {field: 'Email', title: '邮箱', width: '180', sort: true, align: 'center'},
+                {field: 'op', title: '操作', width: '180', align: 'center', toolbar: '#opBtn'},
+            ]]
+        });
+        laydate.render({
+            elem: '#s_beginTime',
+            type: 'datetime'
+        });
+        laydate.render({
+            elem: '#s_endTime',
+            type: 'datetime'
+        });
+        form.on("checkbox(signUp)", function (data) {
+            var approVersion = -1;
+            if (data.elem.checked) {
+                approVersion = 0;
+            } else approVersion = 1;
+            var sId = data.elem.parentNode.parentNode.parentNode.firstChild.innerText;
+            $.post('adminOp_approSignUp', {'approVersion': approVersion, 'signUpId': sId}, function (result) {
+                if (result.complete) {
+                    layer.msg(result.msg, {icon: 6, time: 3000});
+                    table.reload("examTable", {
+                        url: 'adminOp_allSignUp'
+                    });
+                }
+                else layer.msg("操作失败,请重试,多次失败请联系管理员", {icon: 5});
+            }, 'json');
+        });
+        table.on('tool(tb_filter)', function (obj) {
+            var data = obj.data;
+            var event = obj.event;
+            if (event == "remove") {
+                layer.confirm('确定要删除吗', function () {
+                    $.get('../userAction_delUser', {'ids' : data.userId}, function (result) {
+                        if (result.success) {
+                            layer.alert(result.msg, {icon: 6});
+                            tableRender.reload({
+                                url: '../userAction_userList'
+                            });
+                        }else {
+                            layer.alert(result.msg, {icon: 5});
+                        }
+                    }, 'json');
+                });
+
+            }
+        });
+        form.on('submit(searchBtn)', function (data) {
+            var reg = /^[\d|\s]*$/;
+            if (data.field.s_sId.match(reg)) {
+                table.reload('examTable', {
+                    url: 'adminOp_allSignUp',
+                    where: {
+                        s_examName: data.field.s_examName,
+                        s_examBeginTime: data.field.s_examBeginTime,
+                        s_examEndTime: data.field.s_examEndTime,
+                        s_sId: data.field.s_sId
+                    }
+                });
+            } else {
+                layer.alert("需要搜索的ID只能为数字");
+                return;
+            }
+        });
+        var openFrame = function (area, content, openType, title) {
+            layer.open({
+                type: 1,
+                title: title,
+                content: $(content),
+                area: [area[0] + 'px', area[1] + 'px'],
+                btn: ['确定', '取消'],
+                yes:function(){
+                    $('#submit_btn').click();
+                }
+            });
+        };
+        //监听form表单的提交
+        form.on('submit(submit_filter)', function(obj) {
+            var field = obj.field;
+            var reg = /^[0-9]{11}$/ ;//正则表达式匹配规则，匹配11位数字
+            var mpTel = $("input[name=\"user.mpTel\"]").val();
+            var email = $("input[name=\"user.Email\"]").val();
+            var emailValidate = /^[0-9a-zA-Z]+@[0-9a-zA-Z]+.com/;
+            if(!reg.test(mpTel)){
+                layer.alert("请输入正确的手机号码格式")
+                return false;
+            }
+            if(!emailValidate.test(email)){
+                layer.alert("请输入正确的邮箱地址");
+                return false;
+            }
+            $.ajax({ //ajax提交表单
+                url: '../userAction_userInfoOp',
+                data: field, //提交的字段
+                dataType: 'json',
+                async: true,
+                success: function (result) {
+                        alert('到这');
+                    if (result.success) {
+                        tableRender.reload({ //如果提交成功，刷新数据表格
+                            url:'../userAction_userList'
+                        });
+                        layer.closeAll();//关闭所有的弹出层
+                    }else {
+                        layer.msg(result.errmsg, {icon:5});
+                    }
+                    return false;
+                },
+                error: function (re) {
+                    layer.alert('服务器请求出错', {icon: 5});
+                    setTimeout(function () {
+                        layer.closeAll();
+                        tableRender.reload({ //如果提交成功，刷新数据表格
+                            url:'../userAction_userList'
+                        });
+                    }, '1200')
+                }
+            });
+        });
+        var clearForm = function () {
+            $(".userform").
+        };
+        $('.addInfo').click(function () {
+            openFrame(/*area, content, openType, title*/ [640,400],$('#addUserInfoFrame'), 0, '添加用户' );
+        });
+        $('.delAll').click(function () {
+            var checkStatus  = table.checkStatus('tableIndex'); //监听table选中行
+            if (checkStatus.data.length == 0) { //如果当前没有选中的行就提示
+                layer.alert('请选择需要删除的数据', {icon: 5});
+                return;
+            }
+            var ids = [];
+            $.each(checkStatus.data, function (index, val) {
+                ids.push(val.userId);  // 循环将选中的userId放到数组里面
+            });
+            var strIds = ids.join(","); // 将数组转成字符串，以“，”连接
+            layer.confirm('确定要删除吗', function () {
+                $.get('../userAction_delUser', {'ids' : strIds}, function (result) {
+                    if (result.success) {
+                        layer.alert(result.msg, {icon: 6});
+                        tableRender.reload({
+                            url: '../userAction_userList'
+                        });
+                    }else {
+                        layer.alert(result.msg, {icon: 5});
+                    }
+                }, 'json');
+            });
+        });
+    });
+</script>
+</html>

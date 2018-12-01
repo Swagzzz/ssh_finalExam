@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.org.pss.entity.Supplier" table="t_supplier" catalog="pss" lazy="false">
+        <id name="sid" type="java.lang.Integer">
+            <column name="sid" not-null="true"/>
+            <generator class="native" />
+        </id>
+        <property name="spName" type="java.lang.String">
+            <column name="spName" length="25"/>
+        </property>
+        <property name="origPay" type="java.lang.Double">
+            <column name="origPay" length="25"/>
+        </property>
+        <property name="Arrears" type="java.lang.Double">
+            <column name="Arrears" length="25"/>
+        </property>
+        <property name="perContact" type="java.lang.String">
+            <column name="perContact" length="25"/>
+        </property>
+        <property name="mpTel" type="java.lang.String">
+            <column name="mpTel" length="20"/>
+        </property>
+        <property name="greateDate" type="java.util.Date">
+            <column name="greateDate" />
+        </property>
+        <property name="Adress" type="java.lang.String">
+            <column name="Adress" />
+        </property>
+        <property name="remark" type="java.lang.String">
+            <column name="remark" />
+        </property>
+        <property name="Code" type="java.lang.String">
+            <column name="Code" />
+        </property>
+        <set name="goodss" table="t_supplier_goods" >
+            <key>
+                <column name="S_Id"></column>
+            </key>
+            <many-to-many class="com.org.pss.entity.Goods" column="G_Id"></many-to-many>
+        </set>
+        <set name="orders"  inverse="true">
+            <key column="supplier_Id"></key>
+            <one-to-many class="com.org.pss.entity.Order"/>
+        </set>
+    </class>
+</hibernate-mapping>

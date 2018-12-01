@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.org.pss.entity.Order" table="t_order" catalog="pss" lazy="false">
+        <id name="oId" type="java.lang.Integer">
+            <column name="oId" not-null="true"/>
+            <generator class="native"/>
+        </id>
+        <property name="orderTime" type="java.util.Date">
+            <column name="orderTime"/>
+        </property>
+        <property name="State" type="java.lang.Integer">
+            <column name="State" length="11"/>
+        </property>
+        <property name="Price" type="java.lang.Double">
+            <column name="Price" length="25" />
+        </property>
+        <property name="Total" type="java.lang.Integer">
+            <column name="Total" length="11"/>
+        </property>
+        <property name="isApprove" type="java.lang.Integer">
+            <column name="isApprove" length="11"/>
+        </property>
+        <many-to-one name="customer" class="com.org.pss.entity.Customer" cascade="all" column="cId"></many-to-one>
+        <many-to-one name="user" class="com.org.pss.entity.User" cascade="all" column="Order_Id"></many-to-one>
+        <many-to-one name="supplier" class="com.org.pss.entity.Supplier" cascade="all" column="supplier_Id"></many-to-one>
+    </class>
+</hibernate-mapping>

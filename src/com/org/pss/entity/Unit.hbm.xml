@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.org.pss.entity.Unit" table="t_unit" catalog="pss" lazy="false">
+        <id name="uid" type="java.lang.Integer">
+            <column name="uid" not-null="true"/>
+            <generator class="native"/>
+        </id>
+        <property name="uName" type="java.lang.String">
+            <column name="uName"/>
+        </property>
+        <many-to-one name="goods" class="com.org.pss.entity.Goods" cascade="all" column="unit_Id"></many-to-one>
+    </class>
+</hibernate-mapping>
