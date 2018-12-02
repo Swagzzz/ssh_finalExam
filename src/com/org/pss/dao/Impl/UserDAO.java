@@ -39,17 +39,17 @@ public class UserDAO extends BaseDAO implements IUserDAO {
                     sql.append(" and u.fullName like :fullName");
                 }
                 if (user.getSex() != -1) {
-                    sql.append(" and u.userId =:sex ");
+                    sql.append(" and u.sex =:sex ");
                 }
                 Query query = session.createQuery(sql.toString());
                 if (user.getUserId() != -1) {
-                    query.setString("userid", "'".concat("%").concat("" + user.getUserId()).concat("%").concat("'"));
+                    query.setString("userid", "%".concat("" + user.getUserId()).concat("%"));
                 }
                 if (StringUtil.isNotEmpty(user.getFullName())) {
-                    query.setString("fullName", "'".concat("%").concat(user.getFullName()).concat("%").concat("'"));
+                    query.setString("fullName", "%".concat(user.getFullName()).concat("%"));
                 }
                 if (user.getSex() != -1) {
-                    query.setString("sex", "'".concat("%").concat("" + user.getSex()).concat("%").concat("'"));
+                    query.setInteger("sex", user.getSex());
                 }
                 return query.list();
             }
@@ -70,17 +70,17 @@ public class UserDAO extends BaseDAO implements IUserDAO {
                     sql.append(" and u.fullName like :fullName");
                 }
                 if (user.getSex() != -1) {
-                    sql.append(" and u.userId =:sex ");
+                    sql.append(" and u.sex =:sex ");
                 }
                 Query query = session.createQuery(sql.toString());
                 if (user.getUserId() != -1) {
-                    query.setString("userid", "'".concat("%").concat("" + user.getUserId()).concat("%").concat("'"));
+                    query.setString("userid", "%".concat("" + user.getUserId()).concat("%"));
                 }
                 if (StringUtil.isNotEmpty(user.getFullName())) {
-                    query.setString("fullName", "'".concat("%").concat(user.getFullName()).concat("%").concat("'"));
+                    query.setString("fullName", "%".concat(user.getFullName()).concat("%"));
                 }
                 if (user.getSex() != -1) {
-                    query.setString("sex", "'".concat("%").concat("" + user.getSex()).concat("%").concat("'"));
+                    query.setInteger("sex", user.getSex());
                 }
                 return Integer.parseInt(query.list().get(0).toString()); // 2 , "2", Integer.parseInt(arg) 2
             }
@@ -95,10 +95,10 @@ public class UserDAO extends BaseDAO implements IUserDAO {
 
     @Override
     public void userInfoOp(User user, int opversion) { //规定opversion为0则为添加，否则1为修改
-        if(opversion==0){
+        if(opversion == 0){
             getHibernateTemplate().save(user);
         }else {
-            getHibernateTemplate().merge(user);
+            getHibernateTemplate().update(user);
         }
     }
 

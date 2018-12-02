@@ -33,6 +33,7 @@ public class UserAction extends ActionSupport {
     private int page;//表示从第几页开始
     private int limit;//表示一页限制多少条数据
     private int opversion;//标志是删除或修改
+    private int queryVersion;
     @Autowired
     //@Qualifier("userService")
     private IUserService userService;//和service层相连接起来
@@ -53,7 +54,11 @@ public class UserAction extends ActionSupport {
         return SUCCESS;
     }
     public String userList () {
-        User user = new User(userId == 0 ? -1 : userId, StringUtil.isNotEmpty(fullName) ? fullName:null,sex == 0 ? -1:sex);
+        if (queryVersion == 1)
+            sex = sex == 0 ? -1 : sex;
+        else
+            sex = -1;
+        User user = new User(userId == 0 ? -1 : userId, StringUtil.isNotEmpty(fullName) ? fullName.trim() : null, sex);
         List<User> list=userService.listUser(user, new Page(page == 0 ? 1 : page, limit == 0 ? 30 : limit));
         jsonObject = new JSONObject();
         jsonObject.put("msg", "" );
@@ -141,8 +146,10 @@ public class UserAction extends ActionSupport {
     }
     public String userInfoOp(){ //编辑或添加
         jsonObject = new JSONObject();
+        if (opversion == 0)
+            user.setUserId(0);
         int n=userService.userInfoOp(user,opversion);
-        if (n>0){
+        if (n > 0){
             jsonObject.put("success",true);
         }else {
             jsonObject.put("success",false);
@@ -254,5 +261,13 @@ public class UserAction extends ActionSupport {
 
     public void setOpversion(int opversion) {
         this.opversion = opversion;
+    }
+
+    public int getQueryVersion() {
+        return queryVersion;
+    }
+
+    public void setQueryVersion(int queryVersion) {
+        this.queryVersion = queryVersion;
     }
 }

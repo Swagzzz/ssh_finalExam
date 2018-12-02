@@ -6,10 +6,28 @@
     <link rel="shortcut icon" href=../static/images/stephy.ico"/>
     <link rel="stylesheet" href="../static/layui/css/layui.css" type="text/css" media="all">
     <script type="text/javascript" src="../static/layui/layui.js"></script>
+     <style>
+         .myStyleInput {
+             width: 140px;
+             height: 38px;
+             margin: 4px 0 0 5px;
+             border-radius: 10px;
+             border: 1px solid #d2d2d2;
+             padding-left: 8px;
+         }
+     </style>
 </head>
 <body>
 <button type="button" class="layui-btn-danger layui-btn delAll" style="z-index: 20000000"><i class="layui-icon">&#xe640;</i>批量删除</button>
 <button type="button" class="layui-btn-normal layui-btn addInfo" style="z-index: 20000000"><i class="layui-icon">&#xe654;</i>添加</button>
+<input type="text" name="userId" placeholder="输入编号搜索" class="myStyleInput" >
+<input type="text" name="fullName" placeholder="输入姓名搜索" class="myStyleInput">
+<select id="searchSex" name="sex" style="width: 200px; height: 38px;border-radius: 10px;border: 1px solid #d2d2d2;">
+    <option value="">请选择性别..</option>
+    <option value="0">男</option>
+    <option value="1">女</option>
+</select>
+<button id="searchBtn" type="button" class="layui-btn layui-btn-normal"><i class="layui-icon">&#xe615;</i>搜索</button>
 <table id="lay-tb" lay-filter="tb_filter" lay-data="{id: 'tableIndex'}"></table>
 <div id="opBtn" style="display: none;">
     <button type="button" lay-event="remove" class="layui-btn-danger layui-btn layui-btn-mini"><i class="layui-icon">&#xe640;</i>删除</button>
@@ -20,11 +38,11 @@
         <div class="layui-form-item">
             <label class="layui-form-label">用户名称</label>
             <div class="layui-input-inline">
-                <input type="text" style="width: 180px;" name="user.fullName" placeholder="请输入姓名" autocomplete="off" class="layui-input">
+                <input type="text" style="width: 180px;" id="fullName" name="user.fullName" placeholder="请输入姓名" autocomplete="off" class="layui-input fullName">
             </div>
             <label class="layui-form-label">性别</label>
             <div class="layui-input-inline">
-                <select name="user.sex"  autocomplete="off" class="layui-input">
+                <select id="sex" name="user.sex"  autocomplete="off" class="layui-input sex">
                     <option value="">请选择性别...</option>
                     <option value="0">男</option>
                     <option value="1">女</option>
@@ -34,17 +52,23 @@
         <div class="layui-form-item">
             <label class="layui-form-label">手机号码</label>
             <div class="layui-input-inline">
-                <input type="text" name="user.mpTel" placeholder="请输入手机" autocomplete="off" class="layui-input">
+                <input id="mpTel" type="text" name="user.mpTel" placeholder="请输入手机" autocomplete="off" class="layui-input mpTel">
             </div>
             <label class="layui-form-label">地址</label>
             <div class="layui-input-inline">
-                <input type="text" name="user.Address" placeholder="请输入地址" autocomplete="off" class="layui-input">
+                <input id="Address" type="text" name="user.Address" placeholder="请输入地址" autocomplete="off" class="layui-input Address">
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">邮箱地址</label>
             <div class="layui-input-inline">
-                <input type="text" name="user.Email" placeholder="请输入邮箱地址" autocomplete="off" class="layui-input">
+                <input id="Email" type="text" name="user.Email" placeholder="请输入邮箱地址" autocomplete="off" class="layui-input Email">
+            </div>
+        </div>
+        <div class="layui-form-item" style="display: none;">
+            <label class="layui-form-label">userId</label>
+            <div class="layui-input-inline">
+                <input id="userId" type="text" name="user.userId" autocomplete="off" class="layui-input userId">
             </div>
         </div>
         <button id="submit_btn" style="display: none" type="button" lay-submit lay-filter="submit_filter">确定</button>
@@ -99,7 +123,8 @@
                 else layer.msg("操作失败,请重试,多次失败请联系管理员", {icon: 5});
             }, 'json');
         });
-        table.on('tool(tb_filter)', function (obj) {
+        var opversion = '';
+        table.on('tool(tb_filter)', function (obj) {  //table.on是监听表格的事件，此方法是监听toolbar的点击事件
             var data = obj.data;
             var event = obj.event;
             if (event == "remove") {
@@ -115,7 +140,14 @@
                         }
                     }, 'json');
                 });
-
+            }else {
+                opversion = 1;
+                openFrame([640,400],$('#addUserInfoFrame'),opversion,"编辑用户");
+                $(".userform").find('input').each(function (index,value) {
+                    $(value).val(data[$(value).attr('id')]);
+                });
+                $("select[name='user.sex']").val(data.sex == '女' ? 1 : 0);
+                form.render();//更新全部渲染
             }
         });
         form.on('submit(searchBtn)', function (data) {
@@ -135,7 +167,7 @@
                 return;
             }
         });
-        var openFrame = function (area, content, openType, title) {
+        var openFrame = function (area, content, openType, title, userId) {
             layer.open({
                 type: 1,
                 title: title,
@@ -144,6 +176,9 @@
                 btn: ['确定', '取消'],
                 yes:function(){
                     $('#submit_btn').click();
+                },
+                end:function () {
+                    clearForm();
                 }
             });
         };
@@ -155,7 +190,7 @@
             var email = $("input[name=\"user.Email\"]").val();
             var emailValidate = /^[0-9a-zA-Z]+@[0-9a-zA-Z]+.com/;
             if(!reg.test(mpTel)){
-                layer.alert("请输入正确的手机号码格式")
+                layer.alert("请输入正确的手机号码格式");
                 return false;
             }
             if(!emailValidate.test(email)){
@@ -163,12 +198,11 @@
                 return false;
             }
             $.ajax({ //ajax提交表单
-                url: '../userAction_userInfoOp',
+                url: '../userAction_userInfoOp?opversion=' + opversion,
                 data: field, //提交的字段
                 dataType: 'json',
                 async: true,
                 success: function (result) {
-                        alert('到这');
                     if (result.success) {
                         tableRender.reload({ //如果提交成功，刷新数据表格
                             url:'../userAction_userList'
@@ -191,11 +225,17 @@
             });
         });
         var clearForm = function () {
-            $(".userform").
+            $(".userform").find('input').each(function (index,value) {
+                $(value).val("");
+            });
+            $("select[name='user.sex']").val('');
+            form.render();//更新全部渲染
         };
         $('.addInfo').click(function () {
-            openFrame(/*area, content, openType, title*/ [640,400],$('#addUserInfoFrame'), 0, '添加用户' );
+            opversion = 0;
+            openFrame(/*area, content, openType, title*/ [640,400],$('#addUserInfoFrame'),opversion, '添加用户' );
         });
+
         $('.delAll').click(function () {
             var checkStatus  = table.checkStatus('tableIndex'); //监听table选中行
             if (checkStatus.data.length == 0) { //如果当前没有选中的行就提示
@@ -219,6 +259,16 @@
                     }
                 }, 'json');
             });
+        });
+        $('#searchBtn').click(function () {
+             tableRender.reload({
+                 url: '../userAction_userList?queryVersion=' + 1,
+                 where: {
+                     userId: $("input[name='userId']").val(),
+                     fullName: $("input[name='fullName']").val(),
+                     sex: $('#searchSex').val()
+                 }
+             });
         });
     });
 </script>
