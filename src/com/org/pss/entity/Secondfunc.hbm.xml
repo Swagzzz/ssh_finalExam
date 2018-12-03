@@ -17,7 +17,7 @@
             <column name="funcNo" length="25" />
         </property>
         <many-to-one name="func" class="com.org.pss.entity.Func" cascade="all" column="func_Id"></many-to-one>
-        <set name="userSet" table="t_user_secondfunc" inverse="true">
+        <set name="userSet" table="t_user_secondfunc" inverse="true" lazy="false">
             <key>
                 <column name="User_Id"></column>
             </key>

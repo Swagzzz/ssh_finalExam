@@ -11,20 +11,11 @@ import org.springframework.orm.hibernate4.HibernateCallback;
 import org.springframework.stereotype.Repository;
 import util.StringUtil;
 
+import java.util.AbstractList;
+import java.util.ArrayList;
 import java.util.List;
 @Repository
 public class UserDAO extends BaseDAO implements IUserDAO {
-    @Override
-    public boolean checkUser(User user) {
-        //返回的类型是List<?> ，强制转换成一致的类型
-        boolean flag = false;
-        List<User> list = (List<User>) getHibernateTemplate().find("from t_user where id = ? and pwd = ?");
-        if (list.size() > 0 )
-            flag = true;
-        else
-            flag = false;
-        return flag;
-    }
 
     @Override
     public List<User> listUser(User user, Page page) {
@@ -64,7 +55,7 @@ public class UserDAO extends BaseDAO implements IUserDAO {
             public Object doInHibernate(Session session) throws HibernateException {
                 StringBuffer sql = new StringBuffer("select count(*) from User u where 1=1 ");
                 if (user.getUserId() != -1) {
-                    sql.append(" and u.userId like :userid ");
+                    sql.append(" and u.userId like :userId ");
                 }
                 if (StringUtil.isNotEmpty(user.getFullName())) {
                     sql.append(" and u.fullName like :fullName");
@@ -74,7 +65,7 @@ public class UserDAO extends BaseDAO implements IUserDAO {
                 }
                 Query query = session.createQuery(sql.toString());
                 if (user.getUserId() != -1) {
-                    query.setString("userid", "%".concat("" + user.getUserId()).concat("%"));
+                    query.setString("userId", "%".concat("" + user.getUserId()).concat("%"));
                 }
                 if (StringUtil.isNotEmpty(user.getFullName())) {
                     query.setString("fullName", "%".concat(user.getFullName()).concat("%"));
@@ -101,5 +92,27 @@ public class UserDAO extends BaseDAO implements IUserDAO {
             getHibernateTemplate().update(user);
         }
     }
+
+    @Override
+    public void userRegister(User user)  {
+        getHibernateTemplate().save(user);
+    }
+
+    @Override
+    public boolean ValidateByNameOrID(User user) {
+        List<User> list = null;
+        if (user.getUserId() != 0)  //根据userAction的login方法，如果set的是userId那么说明user.getUserId就不会是0，然后根据id查
+            list= (List<User>) getHibernateTemplate().find("from User where id = ? and pwd = ?", user.getUserId(), user.getPwd());
+        else {
+            list= (List<User>) getHibernateTemplate().find("from User where fullName = ? and pwd = ?",
+                    user.getFullName(), user.getPwd());
+
+        }
+        if (list.size() > 0)
+            return true;
+        else
+            return false;
+    }
+
 
 }

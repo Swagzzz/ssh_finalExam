@@ -4,6 +4,7 @@ import com.org.pss.dao.IUserDAO;
 import com.org.pss.entity.Page;
 import com.org.pss.entity.User;
 import com.org.pss.service.IUserService;
+import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -16,23 +17,13 @@ public class UserService implements IUserService {
     @Autowired
     @Qualifier("userDAO")
     private IUserDAO userDAO;
-    @Override
-    public boolean checkUser(User user) {
-        boolean flag = false;
-        try {
-            flag = userDAO.checkUser(user);
-        }catch (Exception e) {
-            e.printStackTrace();
-            flag = false;
-        }
-        return flag;
-    }
+
 
     @Override
     public List<User> listUser(User user, Page page) {
         List<User> listuser = null;
         try{
-            listuser=userDAO.listUser(user,page);
+            listuser = userDAO.listUser(user,page);
         }catch (Exception e){
             e.printStackTrace();
             listuser = null;
@@ -77,5 +68,31 @@ public class UserService implements IUserService {
             e.printStackTrace();
         }
         return result;
+    }
+
+    @Override
+    @Transactional
+    public int save_userRegister(User user) {
+        int returnArg = -1;
+        try {
+            userDAO.userRegister(user);
+            returnArg = 1;
+        } catch (HibernateException e) {
+            returnArg = 0;
+            e.printStackTrace();
+        }
+        return returnArg;
+    }
+
+    @Override
+    public boolean ValidateByNameOrID(User user) {
+        boolean returnArg = false;
+        try {
+            returnArg = userDAO.ValidateByNameOrID(user);
+        } catch (HibernateException e) {
+            returnArg = false;
+            e.printStackTrace();
+        }
+        return returnArg;
     }
 }

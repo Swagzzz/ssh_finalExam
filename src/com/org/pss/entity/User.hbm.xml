@@ -7,6 +7,7 @@
             <column name="id" not-null="true"/>
             <generator class="native"/>
         </id>
+
         <property name="pwd" type="java.lang.String">
             <column name="pwd" not-null="false"/>
         </property>
@@ -27,7 +28,7 @@
         </property>
 
         <property name="isAlived" type="java.lang.Integer">
-            <column name="isAlived" length="11"  not-null="true"/>
+            <column name="isAlived" length="11"  not-null="false"/>
         </property>
         <property name="Email" type="java.lang.String">
             <column name="Email" length="30"  not-null="false"/>
@@ -40,7 +41,7 @@
             <key column="role_Id"  not-null="false"></key>
             <one-to-many class="com.org.pss.entity.Role"/>
         </set>
-        <set name="secondfuncs" table="t_user_secondfunc">
+        <set name="secondfuncs" table="t_user_secondfunc" inverse="false" lazy="false">
             <key>
                 <column name="User_Id"></column>
             </key>

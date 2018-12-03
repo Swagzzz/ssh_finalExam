@@ -9,17 +9,16 @@ import com.org.pss.service.IUserService;
 import com.org.pss.service.Impl.UserService;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import org.apache.struts2.ServletActionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import util.EnumTypeFormat;
 import util.StringUtil;
-
-import javax.print.attribute.IntegerSyntax;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Controller
@@ -29,11 +28,15 @@ public class UserAction extends ActionSupport {
     private JSONObject jsonObject;//异步请求，也就是ajax请求
     private int userId;//可以根据这个用户id去获取数据表中的用户所有属性
     private String fullName;
+    private String code;//验证码
     private int sex;
     private int page;//表示从第几页开始
     private int limit;//表示一页限制多少条数据
     private int opversion;//标志是删除或修改
-    private int queryVersion;
+    private int queryVersion;//标志模糊查询还是全部查询
+    private String version;
+    private  String validateType;//
+
     @Autowired
     //@Qualifier("userService")
     private IUserService userService;//和service层相连接起来
@@ -41,29 +44,54 @@ public class UserAction extends ActionSupport {
     private File file;
     private String fileFileName;
     private String fileContentType, pwd;
-    public String validateUser () { //定义方法的时候，方法名都不是固定的，随意命名
-        User user = new User(userId, pwd);
-        boolean flag = userService.checkUser(user);
+    public String login () {
         jsonObject = new JSONObject();
-        if (flag) {
-            jsonObject.put("success", true);
-        }else {
+        boolean isNum = validateType.matches("^[0-9]+$"); //判断传过来的账号是数字与否
+        if (isNum)
+            user.setUserId(Integer.parseInt(validateType)); //是数字就是根据userId登录,set到User实体类里面
+        else
+            user.setFullName(validateType.trim()); //不是数字就是根据fullName登录,set到User实体类里面
+        boolean flag = userService.ValidateByNameOrID(user);
+        if(!flag){
             jsonObject.put("success", false);
-            jsonObject.put("errMsg", "账号或密码有错");
+            jsonObject.put("errMsg", "请检查账号密码");
+        }
+        else
+           jsonObject.put("success", true);
+        return SUCCESS;
+
+    }
+    public String register () {
+        jsonObject = new JSONObject();
+        int result = userService.save_userRegister(user);
+        if (result > 0)
+            jsonObject.put("success", true);
+        else {
+            jsonObject.put("success", false);
+            jsonObject.put("errMsg", "注册失败");
         }
         return SUCCESS;
     }
-    public String userList () {
+    public String userList (){
         if (queryVersion == 1)
             sex = sex == 0 ? -1 : sex;
         else
             sex = -1;
-        User user = new User(userId == 0 ? -1 : userId, StringUtil.isNotEmpty(fullName) ? fullName.trim() : null, sex);
-        List<User> list=userService.listUser(user, new Page(page == 0 ? 1 : page, limit == 0 ? 30 : limit));
+        User user2 = new User(userId == 0 ? -1 : userId, StringUtil.isNotEmpty(fullName) ? fullName.trim() : null, sex);
+        List<User> list = null;
+        int countUser = 0;
+        if (user2.getUserId() == -1 && user2.getSex() == -1 && !StringUtil.isNotEmpty(user2.getFullName())) {
+            list = userService.listUser(new User(-1, -1), new Page(page == 0 ? 1 : page, limit == 0 ? 30 : limit));
+            countUser = userService.countUser(new User(-1, -1), new Page(page == 0 ? 1 : page, limit == 0 ? 30 : limit));
+        }else {
+            list =  userService.listUser(user2, new Page(page == 0 ? 1 : page, limit == 0 ? 30 : limit));
+            countUser = userService.countUser(user2, new Page(page == 0 ? 1 : page, limit == 0 ? 30 : limit));
+        }
+
         jsonObject = new JSONObject();
         jsonObject.put("msg", "" );
         jsonObject.put("code", 0);
-        jsonObject.put("count", userService.countUser(user, new Page(page == 0 ? 1 : page, limit == 0 ? 30 : limit)));
+        jsonObject.put("count", countUser);
         JSONArray array = new JSONArray();
         if (list != null) {
             for (User u : list) {
@@ -159,9 +187,6 @@ public class UserAction extends ActionSupport {
     }
     public int getUserId() {
         return userId;
-    }
-    public void test () {
-        this.validateUser();
     }
     public void setUserId(int userId) {
         this.userId = userId;
@@ -269,5 +294,29 @@ public class UserAction extends ActionSupport {
 
     public void setQueryVersion(int queryVersion) {
         this.queryVersion = queryVersion;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public String getValidateType() {
+        return validateType;
+    }
+
+    public void setValidateType(String validateType) {
+        this.validateType = validateType;
     }
 }

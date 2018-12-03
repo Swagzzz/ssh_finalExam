@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class User {
-    private int userId;
+    private  int userId;
     private String pwd;
     private String fullName;
     private int sex;
@@ -17,6 +17,12 @@ public class User {
     private Set<Secondfunc> secondfuncs = new HashSet<Secondfunc>();
     private Set<Order> orders = new HashSet<Order>();
     private Set<Role> roles = new HashSet<Role>();
+
+    public User(int userId, String fullName, int sex) {
+        this.userId = userId;
+        this.fullName = fullName;
+        this.sex = sex;
+    }
 
     public User(int userId, String pwd, String fullName, int sex, String mpTel, String address, int isAlived, String email, Set<Secondfunc> secondfuncs, Set<Order> orders, Set<Role> roles) {
         this.userId = userId;
@@ -35,15 +41,9 @@ public class User {
     public User() {
     }
 
-    public User(int userId, String fullName, int sex) {
+    public User(int userId, int sex) {
         this.userId = userId;
-        this.fullName = fullName;
         this.sex = sex;
-    }
-
-    public User(int userId, String pwd) {
-        this.userId = userId;
-        this.pwd = pwd;
     }
 
     public int getUserId() {
